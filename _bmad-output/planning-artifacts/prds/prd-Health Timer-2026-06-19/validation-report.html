@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>PRD Validation: Health Timer</title>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --border: #e7e5e4;
+    --text: #1c1917;
+    --muted: #78716c;
+    --verdict-strong: #16a34a;
+    --verdict-adequate: #65a30d;
+    --verdict-thin: #d97706;
+    --verdict-broken: #dc2626;
+    --sev-low: #64748b;
+    --sev-medium: #ca8a04;
+    --sev-high: #ea580c;
+    --sev-critical: #dc2626;
+    --grade-exc: #16a34a;
+    --grade-good: #65a30d;
+    --grade-fair: #d97706;
+    --grade-poor: #dc2626;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  header.report-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .title h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .title .subtitle { color: var(--muted); font-size: 13px; margin-top: 4px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+  .grade {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    color: white;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .grade-excellent { background: var(--grade-exc); }
+  .grade-good { background: var(--grade-good); }
+  .grade-fair { background: var(--grade-fair); }
+  .grade-poor { background: var(--grade-poor); }
+
+  .synthesis {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--muted);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    font-size: 15.5px;
+  }
+  .synthesis p { margin: 0 0 10px; }
+  .synthesis p:last-child { margin-bottom: 0; }
+
+  .dimension-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .dim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .dim-card .dim-name { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .dim-card .dim-verdict { font-size: 14px; font-weight: 600; }
+
+  section.dimension, section.reviewer-section { margin-bottom: 14px; }
+  section.dimension details, section.reviewer-section details {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  section summary {
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  section summary::-webkit-details-marker { display: none; }
+  section summary::before {
+    content: "▸";
+    display: inline-block;
+    color: var(--muted);
+    transition: transform 0.15s ease;
+  }
+  section details[open] summary::before { transform: rotate(90deg); }
+  section summary h2 {
+    display: inline;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    flex: 1;
+  }
+  .verdict-pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: white;
+  }
+  .verdict-strong { background: var(--verdict-strong); }
+  .verdict-adequate { background: var(--verdict-adequate); }
+  .verdict-thin { background: var(--verdict-thin); }
+  .verdict-broken { background: var(--verdict-broken); }
+
+  .dim-body { padding: 4px 20px 18px; }
+  .dim-judgment { color: var(--text); font-size: 14.5px; }
+  .dim-judgment p { margin: 0 0 10px; }
+
+  .findings-list { padding: 0 20px 4px; }
+  article.finding {
+    padding: 14px 0;
+    border-top: 1px solid var(--border);
+  }
+  article.finding:first-child { border-top: none; }
+  article.finding header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+  }
+  .badge {
+    font-size: 10.5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+  .badge-sev-low { background: rgba(100, 116, 139, 0.12); color: var(--sev-low); }
+  .badge-sev-medium { background: rgba(202, 138, 4, 0.14); color: var(--sev-medium); }
+  .badge-sev-high { background: rgba(234, 88, 12, 0.14); color: var(--sev-high); }
+  .badge-sev-critical { background: rgba(220, 38, 38, 0.14); color: var(--sev-critical); }
+  .finding-title { margin: 0; font-size: 15px; font-weight: 500; flex: 1; min-width: 200px; }
+  .finding-location { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px; color: var(--muted); }
+  .finding-note, .finding-fix { margin-top: 6px; font-size: 14px; }
+  .finding-fix strong { color: var(--muted); font-weight: 500; }
+
+  .mechanical {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 24px;
+    font-size: 14px;
+  }
+  .mechanical h3 { margin: 0 0 10px; font-size: 14px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .mechanical ul { margin: 0; padding-left: 20px; }
+  .mechanical li { margin-bottom: 4px; color: var(--text); }
+
+  footer.report-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  footer .meta { display: flex; gap: 24px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="report-header">
+      <div class="title">
+        <h1>Health Timer — Validation Report</h1>
+        <div class="subtitle">PRD/Health Timer.md</div>
+      </div>
+      <div class="grade grade-fair">Fair</div>
+    </header>
+
+    <div class="synthesis">
+      <p>Pour un outil personnel/hobby, ce PRD est honnête, direct et couvre bien son périmètre. Les non-objectifs sont explicites, les décisions clés sont posées. Il présente deux faiblesses majeures : (1) une ambiguïté sur le regroupement du premier timer (hydratation + étirements + respiration = 1 timer ou 3 ?) qui pourrait provoquer une implémentation incorrecte ; (2) des descriptions comportementales qui s'appuient sur des adjectifs ("très visible", "trop intrusive") plutôt que sur des conditions testables, rendant la <em>done-ness</em> floue.</p>
+      <p>Ces deux points doivent être résolus avant de passer à l'implémentation. Le reste est solide pour le niveau de stakes de ce projet.</p>
+    </div>
+
+    <div class="dimension-summary">
+      <div class="dim-card">
+        <div class="dim-name">Decision-readiness</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">Strong</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Substance over theater</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">Strong</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Strategic coherence</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">Adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Done-ness clarity</div>
+        <div class="dim-verdict" style="color: var(--verdict-thin)">Thin</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Scope honesty</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">Strong</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Downstream usability</div>
+        <div class="dim-verdict" style="color: var(--verdict-adequate)">Adequate</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-name">Shape fit</div>
+        <div class="dim-verdict" style="color: var(--verdict-strong)">Strong</div>
+      </div>
+    </div>
+
+    <!-- Decision-readiness -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Decision-readiness</h2>
+          <span class="verdict-pill verdict-strong">Strong</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Toutes les décisions de périmètre produit sont posées explicitement : pas de distribution externe, pas de comptes utilisateurs, pas de persistance inter-sessions, pas de notifications système. La délégation du choix de stack à l'IA est une décision assumée avec des critères de sélection classés par priorité. La fonctionnalité future rythme cardiaque est correctement bornée comme WIP-only avec un comportement placeholder spécifié.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Ambiguïté sur le regroupement du premier timer</h3>
+              <span class="finding-location">§ Fonctionnalités</span>
+            </header>
+            <div class="finding-note">"un timer à côté d'un pictogramme désignant l'hydratation, les étirements et la respiration" : est-ce 1 timer couvrant 3 rappels différents, ou 3 timers séparés ? Si c'est 1 timer unique, c'est un choix de conception non évident qui mérite d'être explicite.</div>
+            <div class="finding-fix"><strong>Fix :</strong> Préciser "1 timer combiné pour les 3 gestes (hydratation, étirements, respiration)" ou "3 timers distincts, un par geste".</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- Substance over theater -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Substance over theater</h2>
+          <span class="verdict-pill verdict-strong">Strong</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Aucune persona theater (outil solo, pas de personas nécessaires). Pas de NFR boilerplate — les NFRs sont produit-spécifiques (cross-platform sans émulation, open source, contrainte de taille d'écran). Pas de section "Innovation" artificielle. Le document est dense et honnête.</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- Strategic coherence -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Strategic coherence</h2>
+          <span class="verdict-pill verdict-adequate">Adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>La thèse est claire : un petit rappeleur santé desktop non-intrusif couvrant 4 catégories de gestes de santé. Les fonctionnalités découlent logiquement du problème. Pas de métriques de succès définies — approprié pour un outil personnel sans parties prenantes externes.</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- Done-ness clarity -->
+    <section class="dimension">
+      <details open>
+        <summary>
+          <h2>Done-ness clarity</h2>
+          <span class="verdict-pill verdict-thin">Thin</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Les valeurs par défaut, le cycle d'état des timers (démarré / en pause / arrêté / réinitialisé) et les règles de non-persistance sont bien spécifiés. Mais plusieurs comportements clés restent définis par des adjectifs non testables.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-high">high</span>
+              <h3 class="finding-title">Clignotement défini par un adjectif</h3>
+              <span class="finding-location">§ Expérience utilisateur</span>
+            </header>
+            <div class="finding-note">"Clignoter de manière très visible" n'est pas une condition testable. Un développeur doit interpréter fréquence, amplitude, couleur.</div>
+            <div class="finding-fix"><strong>Fix :</strong> Définir concrètement — ex. "le pictogramme alterne entre 100% et 0% d'opacité à une fréquence de 2 Hz".</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Interaction d'édition du timer non décrite</h3>
+              <span class="finding-location">§ Expérience utilisateur</span>
+            </header>
+            <div class="finding-note">"Cliquer sur le timer pour changer sa valeur par défaut" — aucune description de l'UI de cette interaction (dialog modal, champ inline, picker de temps ?).</div>
+            <div class="finding-fix"><strong>Fix :</strong> Décrire l'interaction : "un clic sur la valeur affiche un champ éditable ou une dialog pour saisir HH:MM:SS dans les bornes autorisées".</div>
+          </article>
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-medium">medium</span>
+              <h3 class="finding-title">Zone WIP sous-spécifiée</h3>
+              <span class="finding-location">§ Charge graphique</span>
+            </header>
+            <div class="finding-note">"Réserver de la place" sans préciser la position dans la layout, les dimensions relatives, ni l'état exact du bouton ON/OFF dans la version actuelle.</div>
+            <div class="finding-fix"><strong>Fix :</strong> Préciser la position dans la layout (ex. bande inférieure, panneau latéral) et clarifier si le bouton ON/OFF est grisé/non-cliquable ou cliquable mais sans effet.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- Scope honesty -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Scope honesty</h2>
+          <span class="verdict-pill verdict-strong">Strong</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Les non-objectifs sont explicites et précis : pas d'App Store, pas de comptes, pas d'historique, pas de données personnelles, pas de notifications système, pas de persistance des timers ni des valeurs personnalisées entre sessions. La section WIP borne correctement une fonctionnalité future.</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- Downstream usability -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Downstream usability</h2>
+          <span class="verdict-pill verdict-adequate">Adequate</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Pas d'IDs FR, pas de glossaire, pas de références croisées — mais pour un projet solo allant directement vers l'implémentation IA, c'est acceptable. Le document est plat et lisible de bout en bout.</p>
+          </div>
+        </div>
+        <div class="findings-list">
+          <article class="finding">
+            <header>
+              <span class="badge badge-sev-low">low</span>
+              <h3 class="finding-title">Pas d'identifiants FR stables</h3>
+              <span class="finding-location">§ Fonctionnalités / Expérience utilisateur</span>
+            </header>
+            <div class="finding-note">Rend plus difficile de référencer des exigences spécifiques lors de la revue de code ou de la création de stories.</div>
+            <div class="finding-fix"><strong>Fix :</strong> Ajouter des labels FR-01 à FR-N pour chaque comportement.</div>
+          </article>
+        </div>
+      </details>
+    </section>
+
+    <!-- Shape fit -->
+    <section class="dimension">
+      <details>
+        <summary>
+          <h2>Shape fit</h2>
+          <span class="verdict-pill verdict-strong">Strong</span>
+        </summary>
+        <div class="dim-body">
+          <div class="dim-judgment">
+            <p>Outil hobby/solo, opérateur unique, pas de User Journeys nécessaires, faible rigueur formelle appropriée. La forme correspond parfaitement au produit.</p>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <div class="mechanical">
+      <h3>Mechanical notes</h3>
+      <ul>
+        <li>Pas de dérive de glossaire (peu de termes métier, tous cohérents).</li>
+        <li>Hypothèses implicites non taguées <code>[ASSUMPTION]</code> (ex. "mono-utilisateur" implique pas de sync) — acceptable vu le niveau de stakes.</li>
+        <li>Pas d'Assumptions Index requis à ce niveau.</li>
+      </ul>
+    </div>
+
+    <footer class="report-footer">
+      <div class="meta">
+        <span>Rubric: .claude/skills/bmad-prd/assets/prd-validation-checklist.md</span>
+        <span>Generated: 2026-06-19T17:30:00Z</span>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
