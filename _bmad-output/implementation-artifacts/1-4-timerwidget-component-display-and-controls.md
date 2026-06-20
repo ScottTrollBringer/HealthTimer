@@ -5,7 +5,7 @@ baseline_commit: e700a6a0d2603d6f44c248b8ff4fa6e4283dce90
 
 # Story 1.4: TimerWidget Component — Display and Controls
 
-Status: review
+Status: done
 
 ## Story
 
@@ -474,6 +474,25 @@ claude-sonnet-4-6
 **Round 2 (new):**
 - [x] [Med] Fix setInterval drift: anchor to `Date.now()`, compute elapsed ticks, poll at 200ms
 - [x] [Low] Lazy `useReducer` initializer: `useReducer(timerReducer, defaultSeconds, createInitialState)`
+
+### Review Findings — 2026-06-20 (Round 3)
+
+**Decision Needed (2):**
+
+- [x] [Review][Decision] D1 — Scope creep: Story 1.5 features in 1.4 — REVERT. `.alerting` CSS, `@keyframes blink`, and `DISMISS_ALERT` icon click handler removed from 1.4. To be implemented in Story 1.5.
+- [x] [Review][Decision] D2 — Scope creep: Story 1.6 features in 1.4 — REVERT. Full inline editing system (`isEditing`, `draft`, `cancelledRef`, `startEditing`, `commitEdit`, `cancelEdit`, `parseTimeInput`, `SET_DEFAULT` dispatch, `.timeEditable`, `.timeInput` CSS, 11 tests) removed. To be implemented in Story 1.6.
+
+**Patch (3):**
+
+- [x] [Review][Patch] P1 — Unbounded `while` loop capped [TimerWidget.tsx] — Fixed: `elapsed` now clamped to `Math.min(..., maxTicks)` where `maxTicks = state.remaining + 1` at effect start. 62/62 tests passing.
+- [x] [Review][Patch] P2 — Dismissed: only relevant with inline editing (D2 reverted).
+- [x] [Review][Patch] P3 — False positive: file had only one `line-height: 1.4` declaration. No change needed.
+
+**Defer (3):**
+
+- [x] [Review][Defer] W1 — Minimum-seconds validation contract not visible in diff [TimerWidget.tsx:44-48] — deferred, test passes (61/61) so `parseTimeInput` or reducer must enforce it, but the 5-second minimum enforcement location is undocumented.
+- [x] [Review][Defer] W2 — Sub-second precision lost on each Pause→Resume [TimerWidget.tsx:24] — deferred, `startedAt` resets per running window; acceptable tradeoff for a health reminder app.
+- [x] [Review][Defer] W3 — No test for `defaultSeconds` prop change at runtime [TimerWidget.tsx] — deferred, by-design: `useReducer` lazy initializer runs once; component is not designed to be reconfigured from outside.
 
 ## Change Log
 

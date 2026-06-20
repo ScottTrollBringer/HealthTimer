@@ -5,7 +5,7 @@ baseline_commit: e700a6a0d2603d6f44c248b8ff4fa6e4283dce90
 
 # Story 1.7: Always-on-top window toggle
 
-Status: review
+Status: done
 
 ## Story
 
@@ -181,6 +181,24 @@ claude-sonnet-4-6
 - `health-timer/src/renderer/src/App.tsx` (modified)
 - `health-timer/src/renderer/src/App.module.css` (new)
 - `health-timer/src/renderer/src/App.test.tsx` (new)
+
+### Review Findings — 2026-06-20
+
+**Decision Needed (1):**
+
+- [x] [Review][Decision] D1 — Scope creep: Stories 1.8 + 1.9 features in 1.7 — ACCEPT. 4 TimerWidgets + WipBand in App.tsx and 6 layout tests cover Stories 1.8 and 1.9 scope; marked as done.
+
+**Patch (3):**
+
+- [x] [Review][Patch] P1 — Null-guard added: `window.electronAPI?.setAlwaysOnTop(next)` [App.tsx]
+- [x] [Review][Patch] P2 — `.toggleBtn:focus-visible` rule added [App.module.css]
+- [x] [Review][Patch] P3 — Timer default values in tests now derived from constants via `formatSeconds()` [App.test.tsx]
+
+**Defer (3):**
+
+- [x] [Review][Defer] W1 — Fire-and-forget IPC: optimistic state update before confirmation [App.tsx, handleToggle] — deferred, accepted trade-off for simple Electron toggle; `ipcRenderer.invoke` would be overkill here.
+- [x] [Review][Defer] W2 — `win?.setAlwaysOnTop` silent no-op if `win` is null on startup race [main/index.ts] — deferred, pre-existing since Story 1.1; not introduced by this story.
+- [x] [Review][Defer] W3 — `act()` wrapping `fireEvent` adds no value [App.test.tsx] — deferred, established pattern across test suite; changing here would create inconsistency.
 
 ## Change Log
 

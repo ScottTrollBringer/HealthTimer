@@ -1,5 +1,5 @@
 ---
-status: review
+status: done
 baseline_commit: e700a6a0d2603d6f44c248b8ff4fa6e4283dce90
 ---
 
@@ -220,7 +220,7 @@ claude-sonnet-4-6
 - Updated `vitest.config.ts` with `css.modules.classNameStrategy: 'non-scoped'` to enable CSS class name assertions in tests
 - AC #6 (independent timers) verified by design: each `TimerWidget` has its own `useReducer` — no shared state
 - AC #7 (no notification) verified by omission: renderer process has no access to `Notification` API
-- **50/50 tests pass** (47 pre-existing + 3 new)
+- **65/65 tests pass** (62 pre-existing + 3 new) — re-implemented after code review revert of original Story 1.4 scope-creep cleanup
 
 ### File List
 
@@ -231,4 +231,4 @@ claude-sonnet-4-6
 
 ### Change Log
 
-- 2026-06-20: Story 1.5 implemented — CSS blink animation, icon-click dismiss (DISMISS_ALERT), 3 new tests. 50/50 tests passing.
+- 2026-06-20: Story 1.5 re-implemented — CSS blink animation, icon-click dismiss (DISMISS_ALERT), 3 new tests. 65/65 tests passing. (Original implementation was reverted during Story 1.4 code review; scope correctly re-applied here.)

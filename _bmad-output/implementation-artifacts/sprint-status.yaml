@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-06-19
-last_updated: 2026-06-20  # Story 1.9 created
+last_updated: 2026-06-20  # Story 2.1 done
 project: Health Timer
 project_key: NOKEY
 tracking_system: file-system
@@ -43,19 +43,19 @@ story_location: _bmad-output/implementation-artifacts
 
 development_status:
   # Epic 1: Application Health Timer fonctionnelle
-  epic-1: in-progress
+  epic-1: done
   1-1-project-scaffold-and-window-configuration: done
   1-2-shared-time-utility-functions: done
   1-3-timer-state-machine-timerreducer: done
-  1-4-timerwidget-component-display-and-controls: review
-  1-5-alert-behavior-blink-animation-and-icon-click-dismiss: review
-  1-6-inline-default-value-editing: review
-  1-7-always-on-top-window-toggle: review
-  1-8-wip-heart-rate-band: review
-  1-9-root-layout-full-application-composition: review
+  1-4-timerwidget-component-display-and-controls: done
+  1-5-alert-behavior-blink-animation-and-icon-click-dismiss: done
+  1-6-inline-default-value-editing: done
+  1-7-always-on-top-window-toggle: done
+  1-8-wip-heart-rate-band: done
+  1-9-root-layout-full-application-composition: done
   epic-1-retrospective: optional
 
   # Epic 2: Application distribuable
-  epic-2: backlog
-  2-1-packaging-configuration-and-distribution-builds: backlog
+  epic-2: in-progress
+  2-1-packaging-configuration-and-distribution-builds: done
   epic-2-retrospective: optional

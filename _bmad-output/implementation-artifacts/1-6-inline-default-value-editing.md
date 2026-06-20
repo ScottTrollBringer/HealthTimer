@@ -1,5 +1,5 @@
 ---
-status: review
+status: done
 baseline_commit: e700a6a0d2603d6f44c248b8ff4fa6e4283dce90
 ---
 
@@ -465,9 +465,9 @@ claude-sonnet-4-6
 - Replaced static `<span className={styles.time}>` with conditional: input when `isEditing && stopped`, span otherwise
 - Added `parseTimeInput` import from `../utils/parseTime` (already existed, no changes to the utility)
 - No changes to `timerReducer.ts`, or `formatTime.ts` — reused as-is
-- 8 new tests added; 58/58 total tests pass (50 pre-existing + 8 new)
-- ✅ Resolved [Med] parseTimeInput regex: `\d{1,2}` accepts flexible single-digit format — 3 new tests added
-- ✅ Resolved [Low] removed dead `|| total > MAX_SECONDS` guard from parseTimeInput
+- 8 new tests added; 73/73 total tests pass (65 pre-existing + 8 new) — re-implemented after Story 1.4 code review revert
+- ✅ Resolved [Med] parseTimeInput regex: `\d{1,2}` accepts flexible single-digit format (already in codebase, preserved)
+- ✅ Resolved [Low] removed dead `|| total > MAX_SECONDS` guard from parseTimeInput (already in codebase, preserved)
 
 ### File List
 
@@ -476,6 +476,17 @@ claude-sonnet-4-6
 - `health-timer/src/renderer/src/timer/TimerWidget.test.tsx` (modified)
 - `health-timer/src/renderer/src/utils/parseTime.ts` (modified — regex fix + dead code removal)
 - `health-timer/src/renderer/src/utils/formatTime.test.ts` (modified — 3 new tests for flexible format)
+
+### Review Findings
+
+**Patch (2):**
+
+- [x] [Review][Patch] P1 — No `maxLength` on inline input [TimerWidget.tsx] — added `maxLength={8}`.
+- [x] [Review][Patch] P2 — AC7 not tested for alert state [TimerWidget.test.tsx] — test added; 74/74 pass.
+
+**Deferred (1):**
+
+- [x] [Review][Defer] W1 — No test for Start-clicked-while-editing scenario [TimerWidget.test.tsx] — behavior is correct (blur→commitEdit resets isEditing, SET_DEFAULT no-op), but undocumented by tests. Not required by spec.
 
 ### Senior Developer Review (AI)
 
@@ -492,3 +503,4 @@ claude-sonnet-4-6
 
 - 2026-06-20: Story 1.6 implemented — inline default value editing (isEditing useState, cancelledRef pattern, commitEdit/cancelEdit, 8 new tests). 58/58 tests passing.
 - 2026-06-20: Addressed CR findings — parseTimeInput regex made flexible (`\d{1,2}`), dead code removed, 3 new tests. 61/61 tests passing.
+- 2026-06-20: Re-implemented after Story 1.4 code review revert. parseTime.ts fixes already preserved. 73/73 tests passing.
