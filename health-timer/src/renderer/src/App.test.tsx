@@ -2,6 +2,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, act, cleanup, fireEvent } from '@testing-library/react'
 import App from './App'
+import { formatSeconds } from './utils/formatTime'
+import {
+  DEFAULT_HEALTH_SECONDS,
+  DEFAULT_LONG_BREAK_SECONDS,
+  DEFAULT_EYE_SECONDS,
+  DEFAULT_SITTING_SECONDS,
+} from './timer/timerReducer'
 
 beforeEach(() => {
   vi.stubGlobal('electronAPI', { setAlwaysOnTop: vi.fn() })
@@ -23,24 +30,24 @@ describe('App — root layout', () => {
     expect(screen.getByText('WIP')).toBeTruthy()
   })
 
-  it('timer 1 shows 00:59:59', () => {
+  it('timer 1 (Health gestures) shows default time', () => {
     render(<App />)
-    expect(screen.getByText('00:59:59')).toBeTruthy()
+    expect(screen.getByText(formatSeconds(DEFAULT_HEALTH_SECONDS))).toBeTruthy()
   })
 
-  it('timer 2 shows 01:59:59', () => {
+  it('timer 2 (Long break) shows default time', () => {
     render(<App />)
-    expect(screen.getByText('01:59:59')).toBeTruthy()
+    expect(screen.getByText(formatSeconds(DEFAULT_LONG_BREAK_SECONDS))).toBeTruthy()
   })
 
-  it('timer 3 shows 00:19:59', () => {
+  it('timer 3 (Eye rest) shows default time', () => {
     render(<App />)
-    expect(screen.getByText('00:19:59')).toBeTruthy()
+    expect(screen.getByText(formatSeconds(DEFAULT_EYE_SECONDS))).toBeTruthy()
   })
 
-  it('timer 4 shows 00:29:59', () => {
+  it('timer 4 (Sitting) shows default time', () => {
     render(<App />)
-    expect(screen.getByText('00:29:59')).toBeTruthy()
+    expect(screen.getByText(formatSeconds(DEFAULT_SITTING_SECONDS))).toBeTruthy()
   })
 })
 

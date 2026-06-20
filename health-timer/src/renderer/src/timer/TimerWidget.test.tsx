@@ -89,7 +89,7 @@ describe('TimerWidget', () => {
     expect(screen.queryByRole('button', { name: 'Resume' })).toBeNull()
   })
 
-  it('applies alerting class to icon SVG when in alert state', () => {
+  it('applies alerting class to icon when in alert state', () => {
     vi.useFakeTimers()
     const { container } = render(<TimerWidget icon={Eye} label="Yeux" defaultSeconds={2} />)
     act(() => { fireEvent.click(screen.getByRole('button', { name: 'Start' })) })
@@ -98,7 +98,7 @@ describe('TimerWidget', () => {
     expect(svg?.classList.contains('alerting')).toBe(true)
   })
 
-  it('clicking icon in alert state dismisses alert and resets timer to defaultSeconds', () => {
+  it('clicking icon in alert state dismisses the alert and resets timer', () => {
     vi.useFakeTimers()
     const { container } = render(<TimerWidget icon={Eye} label="Yeux" defaultSeconds={2} />)
     act(() => { fireEvent.click(screen.getByRole('button', { name: 'Start' })) })
@@ -146,7 +146,7 @@ describe('TimerWidget', () => {
     expect(screen.getByText('00:01:00')).toBeTruthy()
   })
 
-  it('rejects value below 5 seconds on blur and restores original', () => {
+  it('rejects value below 5 seconds and restores original', () => {
     render(<TimerWidget icon={Eye} label="Yeux" defaultSeconds={60} />)
     act(() => { fireEvent.click(screen.getByText('00:01:00')) })
     const input = screen.getByRole('textbox')
@@ -156,7 +156,7 @@ describe('TimerWidget', () => {
     expect(screen.getByText('00:01:00')).toBeTruthy()
   })
 
-  it('rejects invalid format on blur and restores original', () => {
+  it('rejects invalid format and restores original', () => {
     render(<TimerWidget icon={Eye} label="Yeux" defaultSeconds={60} />)
     act(() => { fireEvent.click(screen.getByText('00:01:00')) })
     const input = screen.getByRole('textbox')
@@ -183,7 +183,16 @@ describe('TimerWidget', () => {
     expect(screen.queryByRole('textbox')).toBeNull()
   })
 
-  it('commits via Enter key triggering blur', () => {
+  it('does not open editor when timer is in alert state', () => {
+    vi.useFakeTimers()
+    render(<TimerWidget icon={Eye} label="Yeux" defaultSeconds={2} />)
+    act(() => { fireEvent.click(screen.getByRole('button', { name: 'Start' })) })
+    act(() => { vi.advanceTimersByTime(2000) })
+    act(() => { fireEvent.click(screen.getByTestId('timer-display')) })
+    expect(screen.queryByRole('textbox')).toBeNull()
+  })
+
+  it('commits via Enter key (Enter triggers blur → commit)', () => {
     render(<TimerWidget icon={Eye} label="Yeux" defaultSeconds={60} />)
     act(() => { fireEvent.click(screen.getByText('00:01:00')) })
     const input = screen.getByRole('textbox')

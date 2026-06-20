@@ -16,7 +16,7 @@ function App(): React.JSX.Element {
   function handleToggle() {
     const next = !alwaysOnTop
     setAlwaysOnTopState(next)
-    window.electronAPI.setAlwaysOnTop(next)
+    window.electronAPI?.setAlwaysOnTop(next)
   }
 
   return (

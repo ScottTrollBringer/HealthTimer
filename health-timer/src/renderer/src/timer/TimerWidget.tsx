@@ -17,20 +17,6 @@ export function TimerWidget({ icon: Icon, label, defaultSeconds }: TimerWidgetPr
   const [draft, setDraft] = useState('')
   const cancelledRef = useRef(false)
 
-  useEffect(() => {
-    if (state.status !== 'running') return
-    const startedAt = Date.now()
-    let lastTick = 0
-    const id = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - startedAt) / 1000)
-      while (elapsed > lastTick) {
-        lastTick++
-        dispatch({ type: 'TICK' })
-      }
-    }, 200)
-    return () => clearInterval(id)
-  }, [state.status])
-
   function startEditing() {
     if (state.status !== 'stopped') return
     cancelledRef.current = false
@@ -51,6 +37,24 @@ export function TimerWidget({ icon: Icon, label, defaultSeconds }: TimerWidgetPr
     cancelledRef.current = true
     setIsEditing(false)
   }
+
+  useEffect(() => {
+    if (state.status !== 'running') return
+    const startedAt = Date.now()
+    let lastTick = 0
+    const maxTicks = state.remaining + 1
+    const id = setInterval(() => {
+      const elapsed = Math.min(
+        Math.floor((Date.now() - startedAt) / 1000),
+        maxTicks
+      )
+      while (elapsed > lastTick) {
+        lastTick++
+        dispatch({ type: 'TICK' })
+      }
+    }, 200)
+    return () => clearInterval(id)
+  }, [state.status])
 
   return (
     <div className={styles.widget}>
@@ -73,10 +77,12 @@ export function TimerWidget({ icon: Icon, label, defaultSeconds }: TimerWidgetPr
             }}
             onBlur={commitEdit}
             onFocus={(e) => e.target.select()}
+            maxLength={8}
             autoFocus
           />
         ) : (
           <span
+            data-testid="timer-display"
             className={state.status === 'stopped' ? `${styles.time} ${styles.timeEditable}` : styles.time}
             onClick={startEditing}
           >
