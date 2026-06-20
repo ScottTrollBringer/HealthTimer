@@ -7,12 +7,14 @@ export const windowConfig: BrowserWindowConstructorOptions = {
   minWidth: 384,
   minHeight: 216,
   resizable: false,
+  useContentSize: true,
   backgroundColor: '#1a1a1a',
   alwaysOnTop: false,
   show: false,
   autoHideMenuBar: true,
   webPreferences: {
     preload: join(__dirname, '../preload/index.js'),
-    sandbox: false
+    sandbox: true,
+    contextIsolation: true
   }
 }

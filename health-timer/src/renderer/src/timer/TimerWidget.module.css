@@ -1,0 +1,87 @@
+.widget {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 8px;
+  background-color: var(--ht-surface);
+  border-bottom: 1px solid var(--ht-bg);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon {
+  color: var(--ht-muted);
+  flex-shrink: 0;
+}
+
+.label {
+  color: var(--ht-muted);
+  font-size: 11px;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  color: var(--ht-text);
+  font-family: monospace;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+
+.controls {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.btn {
+  background: var(--ht-bg);
+  color: var(--ht-text);
+  border: 1px solid var(--ht-muted);
+  border-radius: 3px;
+  padding: 1px 6px;
+  font-size: 11px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.btn:hover {
+  background: var(--ht-muted);
+  color: var(--ht-bg);
+}
+
+.alerting {
+  animation: blink 1s step-end infinite;
+  cursor: pointer;
+}
+
+@keyframes blink {
+  0%, 100% { color: var(--ht-alert-red); }
+  50%       { color: var(--ht-alert-white); }
+}
+
+.timeEditable {
+  cursor: text;
+}
+
+.timeInput {
+  font-family: monospace;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  color: var(--ht-text);
+  background: var(--ht-bg);
+  border: 1px solid var(--ht-muted);
+  border-radius: 3px;
+  width: 8ch;
+  padding: 0 2px;
+  outline: none;
+}
+
+.timeInput:focus {
+  border-color: var(--ht-text);
+}

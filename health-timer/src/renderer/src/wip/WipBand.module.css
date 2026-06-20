@@ -1,0 +1,29 @@
+.band {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background-color: var(--ht-surface);
+}
+
+.icon {
+  color: var(--ht-muted);
+  flex-shrink: 0;
+}
+
+.label {
+  color: var(--ht-muted);
+  font-size: 11px;
+  flex: 1;
+}
+
+.toggleBtn {
+  background: transparent;
+  border: 1px solid var(--ht-muted);
+  border-radius: 3px;
+  color: var(--ht-muted);
+  cursor: not-allowed;
+  font-size: 11px;
+  padding: 1px 6px;
+  opacity: 0.5;
+}

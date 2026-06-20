@@ -1,0 +1,20 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.toggleBtn {
+  background: transparent;
+  border: 1px solid var(--ht-muted);
+  border-radius: 4px;
+  color: var(--ht-muted);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0 6px;
+}
+
+.toggleBtnActive {
+  border-color: var(--ht-text);
+  color: var(--ht-text);
+}

@@ -4,7 +4,7 @@ baseline_commit: 789accb719523db9bfa13020013db1225637ae28
 
 # Story 1.1: Project Scaffold and Window Configuration
 
-Status: review
+Status: done
 
 ## Story
 
@@ -50,6 +50,15 @@ so that the app launches as a compact, dark-themed, non-resizable window on both
 - [x] Task 5 — Verify cross-platform launch (AC: #8)
   - [x] Run `npm run dev` on the current platform; confirm window dimensions and dark background
   - [x] Confirm no TypeScript compile errors (`npx tsc --noEmit`)
+
+### Review Findings
+
+- [x] [Review][Patch] IPC handler registered inside createWindow() — listener accumulates on macOS activate [src/main/index.ts — ipcMain.on call]
+- [x] [Review][Patch] contextIsolation not explicitly set in webPreferences — should be explicit alongside sandbox:false [src/main/windowConfig.ts — webPreferences]
+- [x] [Review][Patch] document.getElementById('root') non-null assertion without guard [src/renderer/src/main.tsx]
+- [x] [Review][Patch] ipcMain.on 'set-always-on-top' — no runtime typeof validation of enabled parameter [src/main/index.ts — IPC handler]
+- [x] [Review][Defer] setInterval not cleared when status transitions to alert — Story 1.4 useEffect cleanup responsibility — deferred
+- [x] [Review][Defer] RESET from running state — interval may not clear if useEffect only watches PAUSE path — Story 1.4 responsibility — deferred
 
 ## Dev Notes
 

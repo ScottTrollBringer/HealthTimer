@@ -7,6 +7,10 @@ let win: BrowserWindow | null = null
 function createWindow(): void {
   win = new BrowserWindow(windowConfig)
 
+  win.on('closed', () => {
+    win = null
+  })
+
   win.on('ready-to-show', () => {
     win!.show()
   })
@@ -14,10 +18,6 @@ function createWindow(): void {
   win.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
-  })
-
-  ipcMain.on('set-always-on-top', (_event, enabled: boolean) => {
-    win?.setAlwaysOnTop(enabled)
   })
 
   if (process.env['ELECTRON_RENDERER_URL']) {
@@ -28,6 +28,11 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
+  ipcMain.on('set-always-on-top', (_event, enabled: boolean) => {
+    if (typeof enabled !== 'boolean') return
+    win?.setAlwaysOnTop(enabled)
+  })
+
   createWindow()
 
   app.on('activate', () => {
