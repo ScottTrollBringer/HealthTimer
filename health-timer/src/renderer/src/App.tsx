@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Droplet, Coffee, Eye, Armchair } from 'lucide-react'
 import { TimerWidget } from './timer/TimerWidget'
-import WipBand from './wip/WipBand'
 import {
   DEFAULT_HEALTH_SECONDS,
   DEFAULT_LONG_BREAK_SECONDS,
@@ -28,11 +27,10 @@ function App(): React.JSX.Element {
       >
         Always on top
       </button>
-      <TimerWidget icon={Droplet} label="Health gestures" defaultSeconds={DEFAULT_HEALTH_SECONDS} />
+      <TimerWidget icon={Droplet} label="Drink water, get up and stretch" defaultSeconds={DEFAULT_HEALTH_SECONDS} />
       <TimerWidget icon={Coffee} label="Long break" defaultSeconds={DEFAULT_LONG_BREAK_SECONDS} />
       <TimerWidget icon={Eye} label="Eye rest" defaultSeconds={DEFAULT_EYE_SECONDS} />
       <TimerWidget icon={Armchair} label="Sitting" defaultSeconds={DEFAULT_SITTING_SECONDS} />
-      <WipBand />
     </div>
   )
 }
