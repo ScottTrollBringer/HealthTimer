@@ -1,6 +1,6 @@
 {
   "name": "health-timer",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A health reminder timer application",
   "main": "./out/main/index.js",
   "scripts": {
